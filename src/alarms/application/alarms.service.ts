@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAlarmCommand } from './command/create-alarm.command';
+import { CreateAlarmCommand } from './commands/create-alarm.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetAlarmsQuery } from './queries/get-alarms.query';
+import { AcknowledgeAlarmCommand } from './commands/acknowledge-alarm.command';
 
 @Injectable()
 export class AlarmsService {
@@ -11,17 +12,17 @@ export class AlarmsService {
   ) {}
 
   create(createAlarmCommand: CreateAlarmCommand) {
-    /* const alarm = this.alarmFactory.create(
-      createAlarmCommand.name,
-      createAlarmCommand.severity,
-    );
-    return this.alarmRepository.save(alarm); */
+
     return this.commandBus.execute(createAlarmCommand);
 
   }
 
   findAll() {
     return this.queryBus.execute(new GetAlarmsQuery());
+  }
+
+  acknowledge(id: string) {
+    return this.commandBus.execute(new AcknowledgeAlarmCommand(id));
   }
 
 }
