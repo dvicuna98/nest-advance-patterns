@@ -45,7 +45,19 @@ services:
     networks:
       - diego-network
 
-  
+  event-store:
+    image: mongo:6.0.4
+    container_name: nest-microservice-mongodb-event-store
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGODB_DATABASE="vf-event-store"
+    command: "mongod --replSet vf-event-store-repl-set"
+    volumes:
+      - ./scripts/event-store-mongoinit.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - diego-network
+
 networks:
   diego-network:
     external:
